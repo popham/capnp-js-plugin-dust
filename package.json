@@ -1,0 +1,22 @@
+{
+  "name": "capnp-js-plugin-helpers",
+  "version": "0.0.0",
+  "description": "Dust helpers used by capnp-js-plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/popham/capnp-js-plugin-helpers.git"
+  },
+  "author": "Tim Popham",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/popham/capnp-js-plugin-helpers/issues"
+  },
+  "homepage": "https://github.com/popham/capnp-js-plugin-helpers",
+  "dependencies": {
+    "dustjs-helpers": "^1.2.0"
+  }
+}
