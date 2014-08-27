@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/popham/capnp-js-plugin-helpers/issues"
   },
-  "homepage": "https://github.com/popham/capnp-js-plugin-helpers"
+  "homepage": "https://github.com/popham/capnp-js-plugin-helpers",
+  "dependencies": {
+    "dustjs-helpers": "^1.2.0"
+  }
 }
