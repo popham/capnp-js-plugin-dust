@@ -95,3 +95,5 @@ dust.helpers.assert = function (chunk, context, bodies, params) {
 dust.helpers.ctThrow = function (chunk, context, bodies, params) {
     throw new Error(params.message);
 };
+
+module.exports = dust;
