@@ -319,8 +319,7 @@ dust.helpers.imports = function (chunk, context, bodies, params) {
             // Capnproto file f.capnp -> f.capnp.d/files, so to find relative
             // resources I need to navigate up a directory.
             if (i[0] === '.') i[0] = '..';
-            else if (i[0] === '..') i.unshift('..');
-            else throw new Error('Path resolution confusion');
+            else i.unshift('..');
         }
 
         return i.join('/');
