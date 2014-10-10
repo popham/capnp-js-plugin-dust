@@ -1,6 +1,6 @@
 {
   "name": "capnp-js-plugin-dust",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Dust for use by capnp-js-plugin",
   "main": "index.js",
   "scripts": {
