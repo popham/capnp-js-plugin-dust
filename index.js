@@ -307,7 +307,7 @@ dust.helpers.imports = function (chunk, context, bodies, params) {
     var file = dust.helpers.tap(params.file, chunk, context);
     var imports = context.get('.imports');
     var files = imports.map(function (i) {
-        i = i.split('/');
+        i = i.path.split('/');
         i[i.length-1] += '.d';
         i.push(file);
         if (i[0] === '') {
