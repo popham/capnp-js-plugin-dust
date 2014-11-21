@@ -86,6 +86,12 @@ dust.helpers.fieldDisowner = function (chunk, context, bodies, params) {
     return chunk.write(prependCamel('disown', text));
 };
 
+dust.helpers.fieldReaderDisowner = function (chunk, context, bodies, params) {
+    /* {@fieldReaderDisowner name="xyzAsdf"/} -> disownAsReaderXyzAsdf */
+    var text = dust.helpers.tap(params.name, chunk, context);
+    return chunk.write(prependCamel('disownAsReader', text));
+};
+
 dust.helpers.structSize = function (chunk, context, bodies, params) {
     /* {@structSize dataWords=1 pointersWords=2/} -> 24 */
     var data = dust.helpers.tap(params.dataWords, chunk, context) << 3;
@@ -105,28 +111,6 @@ dust.helpers.assert = function (chunk, context, bodies, params) {
 
 dust.helpers.ctThrow = function (chunk, context, bodies, params) {
     throw new Error(params.message);
-};
-
-dust.helpers.partial = function (chunk, context, bodies, params) {
-    /*
-     * dustmotes-provide analogue to bind context for evaluation of a partial
-     * template.
-     */
-    var aside = chunk.data;
-
-    var name;
-    var next = {};
-    for (var k in bodies) {
-        if (k === 'block') {
-            name = bodies[k](chunk, context).data.join().trim();
-        } else {
-            chunk.data = [];
-            next[k] = bodies[k](chunk, context);
-        }
-    }
-
-    chunk.data = aside;
-    return chunk.partial(name, context.push(next), params);
 };
 
 dust.helpers.partial = function (chunk, context, bodies, params) {
@@ -245,16 +229,8 @@ dust.helpers.nullListPointer = function (chunk, context, bodies, params) {
         case "Bool": pointer[4] = 0x01; break;
         case "Int8":
         case "UInt8":
-        case "Data": pointer[4] = 0x02; break;
-        case "Text":
-            pointer = new Buffer(16);
-            pointer[0] = 1;
-            for (var i=1; i<16; ++i) {
-                pointer[i] = 0x00;
-            }
-            pointer[4] = (1 << 3) | 0x02; // Length of one for the null byte.
-
-            return pointer.toString('base64');
+        case "Data": pointer[4] = 0x06;
+        case "Text": pointer[4] = 0x06;
         case "Int16":
         case "UInt16": pointer[4] = 0x03; break;
         case "Int32":
