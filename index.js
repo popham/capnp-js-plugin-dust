@@ -44,6 +44,28 @@ var prependCamel = function (head, camel) {
    return head + camel[0].toUpperCase() + camel.slice(1);
 };
 
+dust.helpers.member = function (chunk, context, bodies, params) {
+    params = params || {};
+    var body = bodies.block;
+    var actualKey = dust.helpers.tap(params.key, chunk, context).trim();
+    var whitelist = dust.helpers.tap(params.value, chunk, context)
+        .split(',')
+        .map(function (w) { return w.trim(); });
+
+    if (whitelist.indexOf(actualKey) >= 0) {
+        if (body) {
+            return chunk.render(body, context);
+        } else {
+            console.log('Missing body block in the "member" helper');
+            return chunk;
+        }
+    } else if (bodies['else']) {
+        return chunk.render(bodies['else'], context);
+    }
+
+    return chunk;
+};
+
 dust.helpers.fieldIser = function (chunk, context, bodies, params) {
     /* {@fieldIser name="xyzAsdf"/} -> isXyzAsdf */
     var text = dust.helpers.tap(params.name, chunk, context);
@@ -132,10 +154,11 @@ dust.helpers.partial = function (chunk, context, bodies, params) {
     }
 
     chunk.data = aside;
+
     return chunk.partial(name, context.push(next), params);
 };
 
-dust.helpers.provide = function (chunk, context, bodies, params) {
+dust.helpers.provide = function (chunk, context, bodies) {
     /*
      * dustmotes-provide variant.
      */
@@ -247,6 +270,14 @@ dust.helpers.nullListPointer = function (chunk, context, bodies, params) {
     return pointer.toString('base64');
 };
 
+dust.helpers.slice = function (chunk, context, bodies, params) {
+    var arr = dust.helpers.tap(params.arr, chunk, context) || [];
+    var begin = dust.helpers.tap(params.begin, chunk, context) || 0;
+    var end = dust.helpers.tap(params.end, chunk, context) || undefined;
+
+    return arr.slice(begin, end);
+};
+
 dust.helpers.dataBytes = function (chunk, context, bodies, params) {
     var layout = dust.helpers.tap(params.layout, chunk, context);
 
@@ -303,10 +334,11 @@ dust.helpers.imports = function (chunk, context, bodies, params) {
     return chunk.write("'" + files.join("','") + "'");
 };
 
-dust.helpers.bytesFields = function (chunk, context, bodies, params) {
+dust.helpers.pointerFields = function (chunk, context, bodies, params) {
     var fields = dust.helpers.tap(params.fields, chunk, context);
 
     var pointers = [];
+
     fields.forEach(function (field) {
         if (field.meta !== undefined) {
             switch (field.meta) {
@@ -318,13 +350,45 @@ dust.helpers.bytesFields = function (chunk, context, bodies, params) {
             case 'AnyPointer': pointers.push(field); break;
             case 'Text': pointers.push(field); break;
             case 'Data': pointers.push(field); break;
-            case 'Float32': pointers.push(field); break;
-            case 'Float64': pointers.push(field); break;
             }
         }
     });
 
     return pointers;
+};
+
+dust.helpers.floatFields = function (chunk, context, bodies, params) {
+    var fields = dust.helpers.tap(params.fields, chunk, context);
+
+    var floats = [];
+
+    fields.forEach(function (field) {
+        switch (field.type) {
+            case 'Float32': floats.push(field); break;
+            case 'Float64': floats.push(field); break;
+        }
+    });
+
+    return floats;
+};
+
+dust.helpers.lastMember = function (chunk, context, bodies, params) {
+    var list = dust.helpers.tap(params.list, chunk, context);
+    return list[list.length-1];
+};
+
+// Lifted from `dustjs-helper-repeat`
+dust.helpers.repeat = function (chunk, context, bodies, params) {
+    var times = dust.helpers.tap(params.times, chunk, context);
+    var start = dust.helpers.tap(params.start, chunk, context) || 0;
+    var body = bodies.block, chunk;
+
+    for (var i=start; i<start+times; i++){
+        chunk = body(chunk, context.push({
+            $key: i
+        }));
+    }
+    return chunk;
 };
 
 module.exports = dust;
