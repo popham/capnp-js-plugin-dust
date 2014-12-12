@@ -109,9 +109,9 @@ dust.helpers.fieldDisowner = function (chunk, context, bodies, params) {
 };
 
 dust.helpers.fieldReaderDisowner = function (chunk, context, bodies, params) {
-    /* {@fieldReaderDisowner name="xyzAsdf"/} -> disownAsReaderXyzAsdf */
+    /* {@fieldReaderDisowner name="xyzAsdf"/} -> disownReadOnlyXyzAsdf */
     var text = dust.helpers.tap(params.name, chunk, context);
-    return chunk.write(prependCamel('disownAsReader', text));
+    return chunk.write(prependCamel('disownReadOnly', text));
 };
 
 dust.helpers.structSize = function (chunk, context, bodies, params) {
@@ -363,9 +363,11 @@ dust.helpers.floatFields = function (chunk, context, bodies, params) {
     var floats = [];
 
     fields.forEach(function (field) {
-        switch (field.type) {
+        if (field.meta === undefined) {
+            switch (field.type) {
             case 'Float32': floats.push(field); break;
             case 'Float64': floats.push(field); break;
+            }
         }
     });
 
