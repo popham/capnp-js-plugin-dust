@@ -252,17 +252,31 @@ dust.helpers.nullListPointer = function (chunk, context, bodies, params) {
         case "Bool": pointer[4] = 0x01; break;
         case "Int8":
         case "UInt8":
-        case "Data": pointer[4] = 0x06;
-        case "Text": pointer[4] = 0x06;
+            pointer[4] = 0x02;
+            break;
+
         case "Int16":
-        case "UInt16": pointer[4] = 0x03; break;
+        case "UInt16":
+            pointer[4] = 0x03;
+            break;
+
         case "Int32":
         case "UInt32":
-        case "Float32": pointer[4] = 0x04; break;
+        case "Float32":
+            pointer[4] = 0x04;
+            break;
+
         case "Int64":
         case "UInt64":
-        case "Float64": pointer[4] = 0x05; break;
-        case "AnyPointer": pointer[4] = 0x06; break;
+        case "Float64":
+            pointer[4] = 0x05;
+            break;
+
+        case "Data":
+        case "Text":
+        case "AnyPointer":
+            pointer[4] = 0x06;
+            break;
         default: throw new Error("Lists of type '"+type+"' are not supported");
         }
     }
@@ -344,6 +358,7 @@ dust.helpers.pointerFields = function (chunk, context, bodies, params) {
             switch (field.meta) {
             case 'struct': pointers.push(field); break;
             case 'list': pointers.push(field); break;
+            case 'parameter': pointers.push(field); break;
             }
         } else {
             switch (field.type) {
