@@ -66,6 +66,12 @@ dust.helpers.member = function (chunk, context, bodies, params) {
     return chunk;
 };
 
+dust.helpers.capitalize = function (chunk, context, bodies, params) {
+    /* {@capitalize name="xyzAsdf"/} -> XyzAsdf */
+    var text = dust.helpers.tap(params.name, chunk, context);
+    return chunk.write(prependCamel('', text));
+};
+
 dust.helpers.fieldIser = function (chunk, context, bodies, params) {
     /* {@fieldIser name="xyzAsdf"/} -> isXyzAsdf */
     var text = dust.helpers.tap(params.name, chunk, context);
